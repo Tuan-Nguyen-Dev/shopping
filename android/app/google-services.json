@@ -20,6 +20,10 @@
             "package_name": "com.shopping",
             "certificate_hash": "b10eac64c4bcb8caf398b01620fd33dbdc078b70"
           }
+        },
+        {
+          "client_id": "246705808223-ebde82f7mq0sl4kt2nvmsmu580rorbbh.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -31,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "246705808223-ksq8c65nbav833e8concnmdfappfr0dl.apps.googleusercontent.com",
+              "client_id": "246705808223-ebde82f7mq0sl4kt2nvmsmu580rorbbh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

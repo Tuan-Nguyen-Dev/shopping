@@ -13,10 +13,9 @@ import {localDataNames} from '../../constants/localDataNames';
 import {addAuth} from '../../redux/reducers/authReducer';
 import {Auth} from '../../utils/handleAuthen';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-
 GoogleSignin.configure({
   webClientId:
-    '246705808223-ksq8c65nbav833e8concnmdfappfr0dl.apps.googleusercontent.com',
+    '246705808223-ebde82f7mq0sl4kt2nvmsmu580rorbbh.apps.googleusercontent.com',
 });
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -24,6 +23,21 @@ const Login = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+
+  const handleLoginWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const user = userInfo.user;
+
+      console.log(user);
+    } catch (error) {
+      console.log('error>>>', error);
+    }
+  };
 
   const handleLogin = async () => {
     if (email && password) {
@@ -58,21 +72,6 @@ const Login = ({navigation}: any) => {
     }
   };
 
-  const handleLoginWithGoogle = async () => {
-    await GoogleSignin.hasPlayServices({
-      showPlayServicesUpdateDialog: true,
-    });
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      console.log(userInfo);
-      const user = userInfo.user;
-
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <Container isScroll={false}>
       <Section>
