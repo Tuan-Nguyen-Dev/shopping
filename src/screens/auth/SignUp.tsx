@@ -63,7 +63,7 @@ const SignUp = ({navigation}: any) => {
           });
         }
         await Auth.CreateProfile();
-        // navigation.navigate('Result');
+        navigation.navigate('Result');
       }
       setIsLoading(false);
     } catch (error: any) {

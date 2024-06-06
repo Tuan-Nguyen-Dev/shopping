@@ -5,27 +5,15 @@ import MainNavigator from './src/routers/MainNavigator';
 import Splash from './src/screens/Splash';
 import {firebase} from '@react-native-firebase/auth';
 import auth from '@react-native-firebase/auth';
+import {Provider} from 'react-redux';
+import Router from './src/routers/Router';
+import store from './src/redux/store';
 const App = () => {
-  const [isLogin, setIsLogin] = useState(false);
-  const [isWellcome, setIsWellcome] = useState(true);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsWellcome(false);
-    }, 1500);
-
-    // tự động chuyển qua màn hình home khi đăng ký
-    // auth().onAuthStateChanged(state =>
-    //   setIsLogin(state ? (state?.uid ? true : false) : false),
-    // );
-
-    return () => clearTimeout(timeout);
-  }, []);
-
   return (
     <NavigationContainer>
-      {/* <MainNavigator /> */}
-      {isWellcome ? <Splash /> : 1 > 2 ? <MainNavigator /> : <AuthNavigator />}
+      <Provider store={store}>
+        <Router />
+      </Provider>
     </NavigationContainer>
   );
 };

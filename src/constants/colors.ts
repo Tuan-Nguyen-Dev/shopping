@@ -5,5 +5,6 @@ export const colors = {
   gray2: '#aaaaaa',
   white: '#ffffff',
   primary: "#83B4FF",
-  dange: "#FF0000"
+  dange: "#FF0000",
+  success: '#2ecc71'
 };
