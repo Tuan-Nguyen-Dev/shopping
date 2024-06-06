@@ -1,17 +1,23 @@
 import {Button, Input, Row, Section, Text} from '@bsdaoquang/rncomponent';
-import React, {useState} from 'react';
-import {Container} from '../../components';
-import {Image, ScrollView} from 'react-native';
-import {fontFamilies} from '../../constants/fontFamilies';
-import {colors} from '../../constants/colors';
-import {Check, TickCircle, TickSquare} from 'iconsax-react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import auth from '@react-native-firebase/auth';
-import {Auth} from '../../utils/handleAuthen';
-import {useDispatch} from 'react-redux';
-import {addAuth} from '../../redux/reducers/authReducer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
+import {TickCircle} from 'iconsax-react-native';
+import React, {useState} from 'react';
+import {Image, ScrollView} from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useDispatch} from 'react-redux';
+import {Container} from '../../components';
+import {colors} from '../../constants/colors';
+import {fontFamilies} from '../../constants/fontFamilies';
 import {localDataNames} from '../../constants/localDataNames';
+import {addAuth} from '../../redux/reducers/authReducer';
+import {Auth} from '../../utils/handleAuthen';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  webClientId:
+    '246705808223-ksq8c65nbav833e8concnmdfappfr0dl.apps.googleusercontent.com',
+});
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,6 +55,22 @@ const Login = ({navigation}: any) => {
       }
     } else {
       console.log('Missing email or password');
+    }
+  };
+
+  const handleLoginWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices({
+      showPlayServicesUpdateDialog: true,
+    });
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+      const user = userInfo.user;
+
+      console.log(user);
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -155,7 +177,7 @@ const Login = ({navigation}: any) => {
             icon={<Ionicons name="logo-google" size={18} color={colors.dark} />}
             title="Continue with Google"
             textStyleProps={{fontFamily: fontFamilies.poppinsMedium}}
-            onPress={handleLogin}
+            onPress={handleLoginWithGoogle}
           />
         </Section>
         <Section>
