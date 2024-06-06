@@ -6,12 +6,33 @@ import {fontFamilies} from '../../constants/fontFamilies';
 import {colors} from '../../constants/colors';
 import {Check, TickCircle, TickSquare} from 'iconsax-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import auth from '@react-native-firebase/auth';
+import {Auth} from '../../utils/handleAuthen';
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    console.log(email, password);
+    if (email && password) {
+      setIsLoading(true);
+      try {
+        const userCredential = await auth().signInWithEmailAndPassword(
+          email,
+          password,
+        );
+        const user = userCredential.user;
+
+        if (user) {
+          await Auth.UpdateProfile(user);
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log('Missing email or password');
+    }
   };
   return (
     <Container isScroll={false}>
@@ -42,7 +63,11 @@ const Login = ({navigation}: any) => {
             keyboardType="email-address"
             bordered={false}
             clear
-            styles={{borderBottomColor: colors.dark, borderBottomWidth: 1}}
+            styles={{
+              borderBottomColor: colors.dark,
+              borderBottomWidth: 1,
+              paddingHorizontal: 0,
+            }}
             placeholder="abc@gmail.com"
             onChange={val => setEmail(val)}
             affix={
@@ -58,7 +83,11 @@ const Login = ({navigation}: any) => {
             color="transparent"
             bordered={false}
             password
-            styles={{borderBottomColor: colors.dark, borderBottomWidth: 1}}
+            styles={{
+              borderBottomColor: colors.dark,
+              borderBottomWidth: 1,
+              paddingHorizontal: 0,
+            }}
             placeholder="********"
             onChange={val => setPassword(val)}
           />
@@ -76,6 +105,7 @@ const Login = ({navigation}: any) => {
         </Row>
         <Section>
           <Button
+            loading={isLoading}
             inline
             title="Login"
             color={colors.dark}

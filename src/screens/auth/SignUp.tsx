@@ -49,26 +49,22 @@ const SignUp = ({navigation}: any) => {
   const createNewAccount = async () => {
     setIsLoading(true);
     try {
-      // console.log(registerForm);
       const userCredential = await auth().createUserWithEmailAndPassword(
         registerForm.email,
         registerForm.password,
       );
 
-      // console.log(userCredential);
       const user = userCredential.user;
 
-      console.log(user);
-      // if (user) {
-      //   // console.log(user);
-      //   if (registerForm.username) {
-      //     await user.updateProfile({
-      //       displayName: registerForm.username,
-      //     });
-      //   }
-      //   await Auth.CreateProfile();
-      //   navigation.navigate('Result');
-      // }
+      if (user) {
+        if (registerForm.username) {
+          await user.updateProfile({
+            displayName: registerForm.username,
+          });
+        }
+        await Auth.CreateProfile();
+        // navigation.navigate('Result');
+      }
       setIsLoading(false);
     } catch (error: any) {
       console.log(error);

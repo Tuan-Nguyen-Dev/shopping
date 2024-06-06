@@ -20,7 +20,7 @@ export class Auth {
 
                 await firestore().collection('users').doc(user.uid).set(data);
 
-                console.log(`User updated`);
+                // console.log(`Create User`);
             } catch (error) {
                 console.log(error);
             }
@@ -37,7 +37,7 @@ export class Auth {
 
             await firestore().collection('users').doc(user.uid).update(data);
 
-            console.log(`User updated`);
+            // console.log(`User updated`);
         } catch (error) {
             console.log(error);
         }
