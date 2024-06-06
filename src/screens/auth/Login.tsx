@@ -23,16 +23,14 @@ const Login = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
-
   const handleLoginWithGoogle = async () => {
-    await GoogleSignin.hasPlayServices({
-      showPlayServicesUpdateDialog: true,
-    });
     try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       const user = userInfo.user;
-
       console.log(user);
     } catch (error) {
       console.log('error>>>', error);
