@@ -18,7 +18,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 GoogleSignin.configure({
   webClientId:
-    '914730098133-71g2tfb4livrl90mi81tqlrgjahitg7t.apps.googleusercontent.com',
+    '281062461095-mekodj4jvj7kvff8kr2bfd6j9689cjfd.apps.googleusercontent.com',
 });
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -50,8 +50,9 @@ const Login = ({navigation}: any) => {
         showPlayServicesUpdateDialog: true,
       });
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.hasPlayServices();
-      console.log(userInfo);
+      const userInfo = await GoogleSignin.signIn();
+      const user = userInfo.user;
+      console.log(user);
     } catch (error) {
       console.log('error>>>', error);
     }
@@ -108,6 +109,7 @@ const Login = ({navigation}: any) => {
         />
       </Section>
       <ScrollView>
+        <Button onPress={() => GoogleSignin.signOut()} title="Logout" />
         <Section>
           <Input
             required
