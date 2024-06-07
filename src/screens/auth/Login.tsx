@@ -12,10 +12,13 @@ import {fontFamilies} from '../../constants/fontFamilies';
 import {localDataNames} from '../../constants/localDataNames';
 import {addAuth} from '../../redux/reducers/authReducer';
 import {Auth} from '../../utils/handleAuthen';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 GoogleSignin.configure({
   webClientId:
-    '246705808223-ebde82f7mq0sl4kt2nvmsmu580rorbbh.apps.googleusercontent.com',
+    '914730098133-71g2tfb4livrl90mi81tqlrgjahitg7t.apps.googleusercontent.com',
 });
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -23,15 +26,32 @@ const Login = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+
+  async function onGoogleButtonPress() {
+    // Check if your device supports Google Play
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      // Get the users ID token
+      const {idToken} = await GoogleSignin.signIn();
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      auth().signInWithCredential(googleCredential);
+      console.log('User signed in successfully');
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const handleLoginWithGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,
       });
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      const user = userInfo.user;
-      console.log(user);
+      const userInfo = await GoogleSignin.hasPlayServices();
+      console.log(userInfo);
     } catch (error) {
       console.log('error>>>', error);
     }
@@ -157,7 +177,7 @@ const Login = ({navigation}: any) => {
             title="Sign Up? "
           />
         </Row>
-
+        <GoogleSigninButton onPress={onGoogleButtonPress} />
         <Section>
           <Button
             icon={
