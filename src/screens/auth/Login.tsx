@@ -16,6 +16,7 @@ import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
+import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
 GoogleSignin.configure({
   webClientId:
     '281062461095-mekodj4jvj7kvff8kr2bfd6j9689cjfd.apps.googleusercontent.com',
@@ -54,6 +55,31 @@ const Login = ({navigation}: any) => {
     } catch (error) {
       console.log('error>>>', error);
     }
+  };
+
+  const handleLoginWithFacebook = async () => {
+    const result = await LoginManager.logInWithPermissions(['public_profile']);
+
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
+
+    // Once signed in, get the users AccessToken
+    const data = await AccessToken.getCurrentAccessToken();
+
+    console.log('data', data);
+
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
+
+    // Create a Firebase credential with the AccessToken
+    const facebookCredential = auth.FacebookAuthProvider.credential(
+      data.accessToken,
+    );
+
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(facebookCredential);
   };
 
   const handleLogin = async () => {
@@ -186,7 +212,7 @@ const Login = ({navigation}: any) => {
             color={colors.primary}
             title="Continue with Facebook"
             textStyleProps={{fontFamily: fontFamilies.poppinsMedium}}
-            onPress={handleLogin}
+            onPress={handleLoginWithFacebook}
           />
         </Section>
         <Section>
