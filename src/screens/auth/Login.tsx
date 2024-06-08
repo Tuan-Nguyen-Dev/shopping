@@ -18,7 +18,7 @@ import {
 } from '@react-native-google-signin/google-signin';
 GoogleSignin.configure({
   webClientId:
-    '914730098133-71g2tfb4livrl90mi81tqlrgjahitg7t.apps.googleusercontent.com',
+    '281062461095-mekodj4jvj7kvff8kr2bfd6j9689cjfd.apps.googleusercontent.com',
 });
 const Login = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -33,7 +33,7 @@ const Login = ({navigation}: any) => {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       // Get the users ID token
       const {idToken} = await GoogleSignin.signIn();
-
+      console.log(idToken);
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
@@ -51,7 +51,6 @@ const Login = ({navigation}: any) => {
       });
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.hasPlayServices();
-      console.log(userInfo);
     } catch (error) {
       console.log('error>>>', error);
     }
@@ -177,6 +176,7 @@ const Login = ({navigation}: any) => {
             title="Sign Up? "
           />
         </Row>
+        <Button onPress={() => GoogleSignin.signOut()} />
         <GoogleSigninButton onPress={onGoogleButtonPress} />
         <Section>
           <Button
