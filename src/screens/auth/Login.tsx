@@ -194,7 +194,7 @@ const Login = ({navigation}: any) => {
             icon={<Ionicons name="logo-google" size={18} color={colors.dark} />}
             title="Continue with Google"
             textStyleProps={{fontFamily: fontFamilies.poppinsMedium}}
-            onPress={handleLoginWithGoogle}
+            onPress={onGoogleButtonPress}
           />
         </Section>
         <Section>
