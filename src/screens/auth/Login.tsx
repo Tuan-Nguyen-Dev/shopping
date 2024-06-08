@@ -179,7 +179,7 @@ const Login = ({navigation}: any) => {
             title="Sign Up? "
           />
         </Row>
-        <GoogleSigninButton onPress={onGoogleButtonPress} />
+        {/* <GoogleSigninButton onPress={onGoogleButtonPress} /> */}
         <Section>
           <Button
             icon={
@@ -196,7 +196,7 @@ const Login = ({navigation}: any) => {
             icon={<Ionicons name="logo-google" size={18} color={colors.dark} />}
             title="Continue with Google"
             textStyleProps={{fontFamily: fontFamilies.poppinsMedium}}
-            onPress={handleLoginWithGoogle}
+            onPress={onGoogleButtonPress}
           />
         </Section>
         <Section>
