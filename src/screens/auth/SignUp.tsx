@@ -113,9 +113,9 @@ const SignUp = ({navigation}: any) => {
             label="User Name"
             value={registerForm.username}
             radius={0}
+            clear
             color="transparent"
             bordered={false}
-            clear
             styles={{borderBottomColor: colors.dark, borderBottomWidth: 1}}
             placeholder="User name"
             onChange={val => handleChangeForm(val, 'username')}

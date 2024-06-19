@@ -8,9 +8,11 @@ import auth from '@react-native-firebase/auth';
 import {Provider} from 'react-redux';
 import Router from './src/routers/Router';
 import store from './src/redux/store';
+import {StatusBar} from 'react-native';
 const App = () => {
   return (
     <NavigationContainer>
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <Provider store={store}>
         <Router />
       </Provider>
