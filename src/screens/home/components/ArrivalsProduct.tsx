@@ -44,6 +44,17 @@ const ArrivalsProduct: FC<Props> = props => {
         onSeeMore={() => {}}
       />
 
+      {/* <Button
+        title="Update"
+        onPress={() => {
+          products.forEach(async product => {
+            await productRef.doc(product.id).update({
+              rate: 0,
+            });
+          });
+        }}
+      /> */}
+
       {products.length > 0 && (
         <FlatList
           showsHorizontalScrollIndicator={false}
@@ -60,20 +71,6 @@ const ArrivalsProduct: FC<Props> = props => {
             </View>
           )}
         />
-        // <Row
-        //   wrap="wrap"
-        //   styles={{
-        //     flex: 1,
-        //     width: sizes.width,
-        //     paddingBottom: 200,
-        //     justifyContent: 'space-between',
-        //     alignItems: 'center',
-        //     paddingHorizontal: 16,
-        //   }}>
-        //   {products.map((product, index) => (
-        //     <ProductItem key={product.id} product={product} />
-        //   ))}
-        // </Row>
       )}
     </View>
   );

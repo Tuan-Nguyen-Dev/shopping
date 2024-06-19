@@ -10,5 +10,6 @@ export interface ProductModel {
     files: string[],
     categories: string[],
     createdAt: number
-    updatedAt: number
+    updatedAt: number,
+    rate: string;
 }

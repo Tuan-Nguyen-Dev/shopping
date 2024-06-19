@@ -8,6 +8,8 @@ import {ScrollView, View} from 'react-native';
 import OfferList from './components/OfferList';
 import ArrivalsProduct from './components/ArrivalsProduct';
 import {useNavigation} from '@react-navigation/native';
+import CategoriesList from './components/CategoriesList';
+import PopularProduct from './components/PopularProduct';
 
 const HomeScreen = () => {
   const [offset, setOffset] = useState(0);
@@ -62,9 +64,11 @@ const HomeScreen = () => {
 
         <OfferList />
         <Space height={20} />
-        <TextComponent text="adads" />
+        <CategoriesList />
         <Space height={20} />
         <ArrivalsProduct />
+        <Space height={20} />
+        <PopularProduct />
       </ScrollView>
     </Container>
   );
