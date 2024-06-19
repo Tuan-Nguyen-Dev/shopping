@@ -18,10 +18,12 @@ import {ProductModel} from '../../../models/ProductModel';
 import {ProductItem, TextComponent} from '../../../components';
 import {sizes} from '../../../constants/sizes';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useNavigation} from '@react-navigation/native';
 interface Props {}
 
 const PopularProduct: FC<Props> = props => {
   const [products, setProducts] = useState<ProductModel[]>([]);
+  const navigation: any = useNavigation();
   useEffect(() => {
     productRef
       .orderBy('rate')
@@ -54,7 +56,9 @@ const PopularProduct: FC<Props> = props => {
 
       {products.length > 0 &&
         products.map(item => (
-          <Card key={item.id}>
+          <Card
+            key={item.id}
+            onPress={() => navigation.navigate('ProductDetail', {id: item.id})}>
             <Row>
               <Image
                 source={{uri: item.imageUrl}}
