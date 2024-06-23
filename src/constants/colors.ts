@@ -6,5 +6,6 @@ export const colors = {
   white: '#ffffff',
   primary: "#83B4FF",
   dange: "#FF0000",
-  success: '#2ecc71'
+  success: '#2ecc71',
+  black: '#1A2130'
 };

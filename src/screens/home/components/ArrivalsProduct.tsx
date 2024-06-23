@@ -24,7 +24,7 @@ const ArrivalsProduct: FC<Props> = props => {
         } else {
           const items: ProductModel[] = [];
           snap.forEach((item: any) => {
-            items.push({
+            items.unshift({
               id: item.id,
               ...item.data(),
             });
