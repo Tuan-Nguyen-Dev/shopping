@@ -22,5 +22,6 @@ export interface SubProduct {
     imageUrl: string
     price: string
     productId: string
-    size: string
+    size: string[],
+    quantity: number
 }

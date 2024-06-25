@@ -14,10 +14,12 @@ type Props = {
   color?: string;
   styles?: StyleProp<TextStyle>;
   type?: 'bigTitle' | 'title' | 'text' | 'description';
+  height?: number;
 };
 
 const TextComponent = (props: Props) => {
-  const {text, size, font, flex, numberOfLine, color, styles, type} = props;
+  const {text, size, font, flex, numberOfLine, color, styles, type, height} =
+    props;
 
   let fontSize: number = sizes.text;
 
@@ -44,6 +46,7 @@ const TextComponent = (props: Props) => {
       numberOfLine={numberOfLine}
       size={size ? size : fontSize}
       color={color ?? colors.dark}
+      lineHeight={height}
       styles={[{lineHeight: size ? size + 4 : fontSize + 4}, styles]}
       weight={
         !type || (type !== 'bigTitle' && type !== 'title') ? '400' : 'bold'
