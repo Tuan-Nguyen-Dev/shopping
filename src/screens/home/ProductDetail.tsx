@@ -21,6 +21,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {colors} from '../../constants/colors';
 import {fontFamilies} from '../../constants/fontFamilies';
+import {Rating} from 'react-native-ratings';
+import RatingComponent from './components/RatingComponent';
+import {useDispatch, useSelector} from 'react-redux';
+import {addcart, cartSelector} from '../../redux/reducers/cartReducer';
 
 const ProductDetail = ({navigation, route}: any) => {
   const {id} = route.params;
@@ -30,10 +34,14 @@ const ProductDetail = ({navigation, route}: any) => {
   const [count, setCount] = useState(1);
   const [sizeSelected, setSizeSelected] = useState('');
 
+  const cartData = useSelector(cartSelector);
+  const dispatch = useDispatch();
   useEffect(() => {
     getProductDetail();
     getSubProducts();
   }, [id]);
+
+  console.log(cartData);
 
   const getProductDetail = () => {
     productRef.doc(id).onSnapshot((snap: any) => {
@@ -75,6 +83,55 @@ const ProductDetail = ({navigation, route}: any) => {
     }
   };
 
+  const handleAddToCard = (item: SubProduct) => {
+    const data = {
+      id: item.id,
+      title: productDetail?.title,
+      size: sizeSelected,
+      quatity: count,
+      description: productDetail?.description,
+      color: item.color,
+      price: item.price,
+      imageUrl: item.imageUrl,
+    };
+    const sub: any = {...subProductSelected};
+
+    sub.quantity = subProductSelected
+      ? subProductSelected?.quantity - count
+      : 0;
+    dispatch(addcart(data));
+
+    setProductDetail(sub);
+  };
+
+  const renderCartButton = () => {
+    const itemCart = cartData.findIndex(
+      (element: any) => element.id === subProductSelected?.id,
+    );
+    return (
+      subProductSelected && (
+        <Button
+          disable={subProductSelected.quantity === 0}
+          icon={
+            <MaterialCommunityIcons
+              name="shopping"
+              size={18}
+              color={colors.white}
+            />
+          }
+          inline
+          onPress={
+            itemCart !== -1
+              ? () => navigation.navigate('CartScreen')
+              : () => handleAddToCard(subProductSelected)
+          }
+          color={colors.black}
+          title={itemCart !== -1 ? `Check Out` : 'Add to card'}
+        />
+      )
+    );
+  };
+
   return (
     <View style={[globalStyles.container]}>
       <View style={[globalStyles.container]}>
@@ -107,7 +164,7 @@ const ProductDetail = ({navigation, route}: any) => {
                 color={colors.white}
               />
             </TouchableOpacity>
-            <Badge count={0}>
+            <Badge count={cartData.length}>
               <TouchableOpacity
                 style={[
                   globalStyles.center,
@@ -148,6 +205,7 @@ const ProductDetail = ({navigation, route}: any) => {
                   color={colors.gray2}
                   styles={{paddingVertical: 8}}
                 />
+                <RatingComponent productId={id} />
               </Col>
               <View>
                 <Row
@@ -287,28 +345,22 @@ const ProductDetail = ({navigation, route}: any) => {
       <Section styles={{backgroundColor: 'white'}}>
         <Row>
           <Col>
-            <TextComponent text="Total price:" size={12} color={colors.gray2} />
-            <TextComponent
-              text={`$123.00`}
-              size={30}
-              font={fontFamilies.poppinsBold}
-            />
-          </Col>
-          <Col>
-            <Button
-              icon={
-                <MaterialCommunityIcons
-                  name="shopping"
-                  size={18}
-                  color={colors.white}
+            {subProductSelected && count && (
+              <>
+                <TextComponent
+                  text="Total price:"
+                  size={12}
+                  color={colors.gray2}
                 />
-              }
-              inline
-              onPress={() => {}}
-              color={colors.black}
-              title="Add to cart"
-            />
+                <TextComponent
+                  text={`$${count * parseFloat(subProductSelected.price)}`}
+                  size={30}
+                  font={fontFamilies.poppinsBold}
+                />
+              </>
+            )}
           </Col>
+          <Col>{renderCartButton()}</Col>
         </Row>
       </Section>
     </View>
