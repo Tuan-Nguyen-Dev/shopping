@@ -24,7 +24,13 @@ import {fontFamilies} from '../../constants/fontFamilies';
 import {Rating} from 'react-native-ratings';
 import RatingComponent from './components/RatingComponent';
 import {useDispatch, useSelector} from 'react-redux';
-import {addcart, cartSelector} from '../../redux/reducers/cartReducer';
+import {
+  addcart,
+  CartItem,
+  cartSelector,
+} from '../../redux/reducers/cartReducer';
+import {sizes} from '../../constants/sizes';
+import * as Colors from '@bsdaoquang/rncomponent';
 
 const ProductDetail = ({navigation, route}: any) => {
   const {id} = route.params;
@@ -34,12 +40,31 @@ const ProductDetail = ({navigation, route}: any) => {
   const [count, setCount] = useState(1);
   const [sizeSelected, setSizeSelected] = useState('');
 
-  const cartData = useSelector(cartSelector);
+  const cartData: CartItem[] = useSelector(cartSelector);
   const dispatch = useDispatch();
+  // console.log('cartData', cartData);
+
+  // // console.log('subProductSelected', subProductSelected);
   useEffect(() => {
     getProductDetail();
     getSubProducts();
   }, [id]);
+
+  useEffect(() => {
+    setCount(1);
+    setSizeSelected('');
+  }, [subProductSelected]);
+
+  useEffect(() => {
+    if (subProductSelected) {
+      const item = cartData.find(
+        element => element.id === subProductSelected.id,
+      );
+      if (item) {
+        setCount(item.quantity);
+      }
+    }
+  }, [cartData, subProductSelected]);
 
   const getProductDetail = () => {
     productRef.doc(id).onSnapshot((snap: any) => {
@@ -86,12 +111,14 @@ const ProductDetail = ({navigation, route}: any) => {
       id: item.id,
       title: productDetail?.title,
       size: sizeSelected,
-      quatity: count,
+      quantity: count,
       description: productDetail?.description,
       color: item.color,
       price: item.price,
       imageUrl: item.imageUrl,
     };
+
+    // console.log('Date>>>', data);
     const sub: any = {...subProductSelected};
 
     sub.quantity = subProductSelected
@@ -99,13 +126,10 @@ const ProductDetail = ({navigation, route}: any) => {
       : 0;
     dispatch(addcart(data));
 
-    setProductDetail(sub);
+    setSubProductSelected(sub);
   };
 
   const renderCartButton = () => {
-    const itemCart = cartData.findIndex(
-      (element: any) => element.id === subProductSelected?.id,
-    );
     return (
       subProductSelected && (
         <Button
@@ -118,36 +142,51 @@ const ProductDetail = ({navigation, route}: any) => {
             />
           }
           inline
-          onPress={
-            itemCart !== -1
-              ? () => navigation.navigate('CartScreen')
-              : () => handleAddToCard(subProductSelected)
-          }
+          onPress={() => handleAddToCard(subProductSelected)}
           color={colors.black}
-          title={itemCart !== -1 ? `Check Out` : 'Add to card'}
+          title={'Add to card'}
         />
       )
     );
   };
 
   return (
-    <View style={[globalStyles.container]}>
-      <View style={[globalStyles.container]}>
-        <Section
-          styles={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            left: 0,
-            padding: 20,
-            zIndex: 5,
-          }}>
-          <Row justifyContent="space-between">
+    <>
+      <Section
+        styles={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          left: 0,
+          padding: 20,
+          zIndex: 5,
+        }}>
+        <Row justifyContent="space-between">
+          <TouchableOpacity
+            style={[
+              globalStyles.center,
+              {
+                backgroundColor: colors.black,
+                borderRadius: 100,
+                padding: 0,
+                width: 38,
+                height: 38,
+              },
+            ]}
+            onPress={() => navigation.goBack()}>
+            <MaterialIcons
+              style={{marginLeft: 8}}
+              name="arrow-back-ios"
+              size={22}
+              color={colors.white}
+            />
+          </TouchableOpacity>
+          <Badge count={cartData.length}>
             <TouchableOpacity
               style={[
                 globalStyles.center,
                 {
-                  backgroundColor: colors.black,
+                  backgroundColor: colors.white,
                   borderRadius: 100,
                   padding: 0,
                   width: 38,
@@ -155,196 +194,208 @@ const ProductDetail = ({navigation, route}: any) => {
                 },
               ]}
               onPress={() => navigation.goBack()}>
-              <MaterialIcons
-                style={{marginLeft: 8}}
-                name="arrow-back-ios"
+              <MaterialCommunityIcons
+                name="shopping"
                 size={22}
-                color={colors.white}
+                color={colors.black}
               />
             </TouchableOpacity>
-            <Badge count={cartData.length}>
-              <TouchableOpacity
-                style={[
-                  globalStyles.center,
-                  {
-                    backgroundColor: colors.white,
-                    borderRadius: 100,
-                    padding: 0,
-                    width: 38,
-                    height: 38,
-                  },
-                ]}
-                onPress={() => navigation.goBack()}>
-                <MaterialCommunityIcons
-                  name="shopping"
-                  size={22}
-                  color={colors.black}
-                />
-              </TouchableOpacity>
-            </Badge>
-          </Row>
-        </Section>
-        {subProductSelected && subProductSelected.files.length > 0 && (
-          <ImageSwiper files={subProductSelected?.files} />
-        )}
-      </View>
-      <ScrollView style={[globalStyles.container]}>
-        {productDetail && subProductSelected && (
-          <Section styles={{paddingVertical: 12}}>
-            <Row>
-              <Col>
-                <TextComponent
-                  text={productDetail?.title}
-                  font={fontFamilies.RobotoBold}
-                  size={20}
-                />
-                <TextComponent
-                  text={productDetail.type}
-                  color={colors.gray2}
-                  styles={{paddingVertical: 8}}
-                />
-                <RatingComponent productId={id} />
-              </Col>
-              <View>
-                <Row
-                  styles={{
-                    backgroundColor: colors.gray2,
-                    padding: 6,
-                    borderRadius: 100,
-                  }}>
-                  <TouchableOpacity
-                    disabled={
-                      subProductSelected && subProductSelected.quantity === 0
-                    }
-                    style={{paddingHorizontal: 12}}
-                    onPress={() => setCount(count + 1)}>
-                    <Add size={24} color={colors.dark} />
-                  </TouchableOpacity>
-                  <TextComponent
-                    text={count.toString()}
-                    size={16}
-                    font={fontFamilies.poppinsRegular}
-                  />
-                  <TouchableOpacity
-                    disabled={count === 1}
-                    onPress={() => setCount(count - 1)}
-                    style={{paddingHorizontal: 12}}>
-                    <Minus
-                      size={24}
-                      color={count === 1 ? colors.gray : colors.dark}
-                    />
-                  </TouchableOpacity>
-                </Row>
-                <Space height={12} />
-                <TextComponent
-                  text={`${
-                    subProductSelected && subProductSelected.quantity > 0
-                      ? 'Avalible'
-                      : 'Unavalible'
-                  } in stock`}
-                  font={fontFamilies.RobotoMedium}
-                  styles={{textAlign: 'center'}}
-                />
-              </View>
-            </Row>
-            <Space height={20} />
-            <Row>
-              <Col>
-                <View>
-                  <TextComponent
-                    font={fontFamilies.RobotoBold}
-                    text="Size"
-                    size={18}
-                  />
-                  <Space height={10} />
-                  <Row wrap="wrap" justifyContent="flex-start">
-                    {subProductSelected.size &&
-                      subProductSelected.size.length > 0 &&
-                      subProductSelected.size.map((itemSize, index) => (
-                        <Button
-                          color={
-                            itemSize === sizeSelected ? colors.black : undefined
-                          }
-                          styles={{
-                            minWidth: 50,
-                            height: 50,
-                            paddingHorizontal: 0,
-                            marginRight:
-                              index < subProductSelected.size.length - 1
-                                ? 12
-                                : 0,
-                          }}
-                          textStyleProps={{
-                            fontSize: 16,
-                          }}
-                          key={itemSize}
-                          inline
-                          isShadow={false}
-                          title={itemSize}
-                          onPress={() => setSizeSelected(itemSize)}
-                        />
-                      ))}
-                  </Row>
-                </View>
-              </Col>
-              <View
-                style={[
-                  globalStyles.shadow,
-                  {
-                    marginHorizontal: 12,
-                    padding: 12,
-                    borderRadius: 100,
-                    backgroundColor: 'white',
-                  },
-                ]}>
-                {subProducts.length > 0 &&
-                  subProducts.map(item => (
-                    <TouchableOpacity
-                      key={item.id}
-                      onPress={() => {
-                        setSubProductSelected(item);
-                      }}
-                      style={[
-                        globalStyles.center,
-                        {
-                          width: 24,
-                          height: 24,
-                          borderRadius: 100,
-                          backgroundColor: item.color,
-                          marginVertical: 2,
-                        },
-                      ]}>
-                      {item.color === subProductSelected.color && (
-                        <MaterialCommunityIcons
-                          name="check"
-                          size={18}
-                          color={'white'}
-                        />
-                      )}
-                    </TouchableOpacity>
-                  ))}
-              </View>
-            </Row>
-
-            <Space height={20} />
-            <View>
-              <TextComponent
-                font={fontFamilies.RobotoBold}
-                text="Description"
-                size={18}
-              />
-              <Space height={10} />
-              <TextComponent
-                text={productDetail.description}
-                numberOfLine={4}
-                styles={{textAlign: 'justify'}}
-                color={colors.gray2}
-              />
+          </Badge>
+        </Row>
+      </Section>
+      <ScrollView
+        style={[
+          globalStyles.container,
+          {backgroundColor: 'white', flexGrow: 1},
+        ]}>
+        <View
+          style={[
+            globalStyles.container,
+            {
+              height: sizes.height * 0.5,
+            },
+          ]}>
+          {subProductSelected && subProductSelected.files.length > 0 && (
+            <View
+              style={{
+                width: sizes.width,
+                height: sizes.height * 0.5,
+              }}>
+              <ImageSwiper files={subProductSelected?.files} />
             </View>
-          </Section>
-        )}
+          )}
+        </View>
+        <View
+          style={[
+            globalStyles.container,
+            {
+              borderTopRightRadius: 20,
+              borderTopLeftRadius: 20,
+              marginTop: -20,
+              backgroundColor: 'white',
+            },
+          ]}>
+          {productDetail && subProductSelected && (
+            <Section styles={{paddingVertical: 12}}>
+              <Row>
+                <Col>
+                  <TextComponent
+                    text={productDetail?.title}
+                    font={fontFamilies.RobotoBold}
+                    size={20}
+                  />
+                  <TextComponent
+                    text={productDetail.type}
+                    color={colors.gray2}
+                    styles={{paddingVertical: 8}}
+                  />
+                  <RatingComponent productId={id} />
+                </Col>
+                <View>
+                  <Row
+                    styles={{
+                      backgroundColor: colors.gray2,
+                      padding: 6,
+                      borderRadius: 100,
+                    }}>
+                    <TouchableOpacity
+                      disabled={
+                        subProductSelected && subProductSelected.quantity === 0
+                      }
+                      style={{paddingHorizontal: 12}}
+                      onPress={() => setCount(count + 1)}>
+                      <Add size={24} color={colors.dark} />
+                    </TouchableOpacity>
+                    <TextComponent
+                      text={count.toString()}
+                      size={16}
+                      font={fontFamilies.poppinsRegular}
+                    />
+                    <TouchableOpacity
+                      disabled={count === 1}
+                      onPress={() => setCount(count - 1)}
+                      style={{paddingHorizontal: 12}}>
+                      <Minus
+                        size={24}
+                        color={count === 1 ? colors.gray : colors.dark}
+                      />
+                    </TouchableOpacity>
+                  </Row>
+                  <Space height={12} />
+                  <TextComponent
+                    text={`${
+                      subProductSelected && subProductSelected.quantity > 0
+                        ? 'Avalible'
+                        : 'Unavalible'
+                    } in stock`}
+                    font={fontFamilies.RobotoMedium}
+                    styles={{textAlign: 'center'}}
+                  />
+                </View>
+              </Row>
+              <Space height={20} />
+              <Row>
+                <Col>
+                  <View>
+                    <TextComponent
+                      font={fontFamilies.RobotoBold}
+                      text="Size"
+                      size={18}
+                    />
+                    <Space height={10} />
+                    <Row wrap="wrap" justifyContent="flex-start">
+                      {subProductSelected.size &&
+                        subProductSelected.size.length > 0 &&
+                        subProductSelected.size.map((itemSize, index) => (
+                          <Button
+                            color={
+                              itemSize === sizeSelected
+                                ? colors.black
+                                : undefined
+                            }
+                            styles={{
+                              minWidth: 50,
+                              height: 50,
+                              paddingHorizontal: 0,
+                              marginBottom: 5,
+                              marginRight:
+                                index < subProductSelected.size.length - 1
+                                  ? 12
+                                  : 0,
+                            }}
+                            textStyleProps={{
+                              fontSize: 16,
+                            }}
+                            key={itemSize}
+                            inline
+                            isShadow={false}
+                            title={itemSize}
+                            onPress={() => setSizeSelected(itemSize)}
+                          />
+                        ))}
+                    </Row>
+                  </View>
+                </Col>
+                <View
+                  style={[
+                    globalStyles.shadow,
+                    {
+                      marginHorizontal: 12,
+                      padding: 12,
+                      borderRadius: 100,
+                      backgroundColor: 'white',
+                    },
+                  ]}>
+                  {subProducts.length > 0 &&
+                    subProducts.map(item => (
+                      <TouchableOpacity
+                        key={item.id}
+                        onPress={() => {
+                          setSubProductSelected(item);
+                        }}
+                        style={[
+                          globalStyles.center,
+                          {
+                            width: 24,
+                            height: 24,
+                            borderRadius: 100,
+                            backgroundColor: item.color,
+                            marginVertical: 2,
+                            borderColor: '#e0e0e0',
+                          },
+                        ]}>
+                        {item.color === subProductSelected.color && (
+                          <MaterialCommunityIcons
+                            name="check"
+                            size={18}
+                            color={'white'}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              </Row>
+
+              <Space height={20} />
+              <View>
+                <TextComponent
+                  font={fontFamilies.RobotoBold}
+                  text="Description"
+                  size={18}
+                />
+                <Space height={10} />
+                <TextComponent
+                  text={productDetail.description}
+                  numberOfLine={4}
+                  styles={{textAlign: 'justify'}}
+                  color={colors.gray2}
+                />
+              </View>
+            </Section>
+          )}
+        </View>
       </ScrollView>
-      <Section styles={{backgroundColor: 'white'}}>
+      <Section styles={{backgroundColor: 'white', paddingTop: 12}}>
         <Row>
           <Col>
             {subProductSelected && count && (
@@ -365,7 +416,7 @@ const ProductDetail = ({navigation, route}: any) => {
           <Col>{renderCartButton()}</Col>
         </Row>
       </Section>
-    </View>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {localDataNames} from '../constants/localDataNames';
+import {syncLocalStorage} from '../redux/reducers/cartReducer';
 const Router = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isWellcome, setIsWellcome] = useState(true);
@@ -30,6 +31,7 @@ const Router = () => {
 
   const getInitData = async () => {
     await getAuthData();
+    await getCartData();
     setIsWellcome(false);
   };
 
@@ -38,6 +40,13 @@ const Router = () => {
 
     if (res) {
       dispatch(addAuth(JSON.parse(res)));
+    }
+  };
+
+  const getCartData = async () => {
+    const res = await AsyncStorage.getItem(localDataNames.cart);
+    if (res) {
+      dispatch(syncLocalStorage(JSON.parse(res)));
     }
   };
 
