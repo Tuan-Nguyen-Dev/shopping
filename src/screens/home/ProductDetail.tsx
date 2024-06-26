@@ -41,8 +41,6 @@ const ProductDetail = ({navigation, route}: any) => {
     getSubProducts();
   }, [id]);
 
-  console.log(cartData);
-
   const getProductDetail = () => {
     productRef.doc(id).onSnapshot((snap: any) => {
       if (snap.exists) {
@@ -215,7 +213,9 @@ const ProductDetail = ({navigation, route}: any) => {
                     borderRadius: 100,
                   }}>
                   <TouchableOpacity
-                    disabled={subProductSelected.quantity === 0}
+                    disabled={
+                      subProductSelected && subProductSelected.quantity === 0
+                    }
                     style={{paddingHorizontal: 12}}
                     onPress={() => setCount(count + 1)}>
                     <Add size={24} color={colors.dark} />
@@ -238,7 +238,9 @@ const ProductDetail = ({navigation, route}: any) => {
                 <Space height={12} />
                 <TextComponent
                   text={`${
-                    subProductSelected.quantity > 0 ? 'Avalible' : 'Unavalible'
+                    subProductSelected && subProductSelected.quantity > 0
+                      ? 'Avalible'
+                      : 'Unavalible'
                   } in stock`}
                   font={fontFamilies.RobotoMedium}
                   styles={{textAlign: 'center'}}
